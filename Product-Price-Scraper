@@ -1,0 +1,22 @@
+import requests
+from bs4 import BeautifulSoup
+
+def scrape_product_prices(url):
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"}
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        prices = []
+        for product in soup.find_all(class_='product'):
+            name = product.find(class_='name').get_text(strip=True)
+            price = product.find(class_='price').get_text(strip=True)
+            prices.append({'name': name, 'price': price})
+        return prices
+    else:
+        print("Failed to retrieve data")
+
+if __name__ == "__main__":
+    url = "https://example.com/products"
+    product_prices = scrape_product_prices(url)
+    for product in product_prices:
+        print(product)
